@@ -6,11 +6,6 @@ import { z } from "zod";
 import { isAuthenticated } from "./replit_integrations/auth/replitAuth";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY ?? process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-});
-
 export async function registerRoutes(
   httpServer: Server,
   app: Express
@@ -95,6 +90,10 @@ export async function registerRoutes(
       if (!page) {
         return res.status(404).json({ message: "Page not found" });
       }
+      const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY ?? process.env.AI_INTEGRATIONS_OPENAI_API_KEY,
+        baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
+      });
       const input = api.pages.askAi.input.parse(req.body);
       let systemPrompt =
         "You are a helpful AI writing assistant embedded in a Notion-like text editor. Help the user write, edit, or brainstorm content.";

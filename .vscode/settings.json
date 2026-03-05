@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^Get-Process node -ErrorAction SilentlyContinue \\| Select-Object Id, ProcessName, CPU$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}
