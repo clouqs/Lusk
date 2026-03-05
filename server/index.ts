@@ -61,6 +61,11 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  // Trust Railway's reverse proxy so req.secure reflects the original HTTPS
+  // connection. Without this, express-session refuses to set secure cookies
+  // because it only sees the internal HTTP connection from the proxy.
+  app.set("trust proxy", 1);
+
   await setupAuth(app);
   registerAuthRoutes(app);
   await registerRoutes(httpServer, app);
