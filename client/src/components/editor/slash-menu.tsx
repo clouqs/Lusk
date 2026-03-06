@@ -1,5 +1,4 @@
-import { Editor } from "@tiptap/react";
-import { FloatingMenu } from "@tiptap/extension-floating-menu";
+import { Editor, FloatingMenu } from "@tiptap/react";
 import { Type, Heading1, Heading2, Heading3, List, ListOrdered, CheckSquare, Sparkles } from "lucide-react";
 import { useState } from "react";
 
@@ -11,7 +10,7 @@ export function SlashMenu({ editor, onAiClick }: { editor: Editor; onAiClick: ()
   return (
     <FloatingMenu 
       editor={editor} 
-      tippyOptions={{ duration: 100, placement: 'bottom-start' }}
+      options={{ placement: 'bottom-start' }}
       shouldShow={({ state }) => {
         const { $from } = state.selection;
         const currentLineText = $from.nodeBefore?.textContent;
