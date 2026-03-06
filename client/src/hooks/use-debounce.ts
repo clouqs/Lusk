@@ -7,17 +7,10 @@ export function useDebounce<T extends (...args: any[]) => any>(
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const callbackRef = useRef(callback);
 
+  // No dependency array — always keeps callbackRef current without triggering re-renders
   useEffect(() => {
     callbackRef.current = callback;
   });
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   return useCallback((...args: any[]) => {
     if (timeoutRef.current) {
