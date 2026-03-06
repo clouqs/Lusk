@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'katex/dist/katex.min.css';
 
 @tailwind base;
 @tailwind components;
@@ -157,3 +158,158 @@
   text-decoration: line-through;
   color: hsl(var(--muted-foreground));
 }
+
+/* ─── Highlight ─── */
+.ProseMirror mark {
+  background-color: hsl(50 100% 50% / 0.3);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+.dark .ProseMirror mark {
+  background-color: hsl(50 100% 60% / 0.25);
+}
+
+/* ─── Inline code ─── */
+.ProseMirror code {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.875em;
+}
+
+/* ─── Code block (lowlight) ─── */
+.ProseMirror pre {
+  background: hsl(var(--muted));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+.dark .ProseMirror pre {
+  background: hsl(0 0% 8%);
+}
+.ProseMirror pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.875rem;
+  color: inherit;
+  border-radius: 0;
+}
+
+/* Syntax highlight tokens */
+.hljs-comment, .hljs-quote { color: hsl(var(--muted-foreground)); font-style: italic; }
+.hljs-keyword, .hljs-selector-tag, .hljs-built_in { color: #c792ea; }
+.hljs-string, .hljs-attr { color: #c3e88d; }
+.hljs-number, .hljs-literal { color: #f78c6c; }
+.hljs-function, .hljs-title { color: #82aaff; }
+.hljs-type, .hljs-class { color: #ffcb6b; }
+.hljs-variable, .hljs-name { color: #f07178; }
+.hljs-operator, .hljs-punctuation { color: #89ddff; }
+.dark .hljs-comment, .dark .hljs-quote { color: hsl(var(--muted-foreground)); }
+
+/* ─── Blockquote ─── */
+.ProseMirror blockquote {
+  border-left: 3px solid hsl(var(--border));
+  padding: 0.25rem 0 0.25rem 1rem;
+  margin: 0.5rem 0;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+/* ─── Links ─── */
+.ProseMirror a.editor-link,
+.ProseMirror a {
+  color: hsl(211 100% 58%);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.15s;
+}
+.ProseMirror a:hover {
+  text-decoration-color: hsl(211 100% 58%);
+}
+
+/* ─── Images ─── */
+.ProseMirror img.editor-image,
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 0.5rem 0;
+  display: block;
+}
+
+/* ─── Horizontal Rule ─── */
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 1.5rem 0;
+}
+
+/* ─── Math block wrapper ─── */
+.math-block-wrapper {
+  user-select: none;
+}
+.math-block-wrapper .katex-display {
+  margin: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.math-block-wrapper .katex {
+  font-size: 1.1em;
+}
+
+/* ─── Table ─── */
+.ProseMirror table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 0.75rem 0;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--border));
+}
+.ProseMirror th, .ProseMirror td {
+  border: 1px solid hsl(var(--border));
+  padding: 0.5rem 0.75rem;
+  vertical-align: top;
+  min-width: 80px;
+  position: relative;
+}
+.ProseMirror th {
+  background: hsl(var(--muted));
+  font-weight: 600;
+  text-align: left;
+}
+.ProseMirror .selectedCell {
+  background: hsl(var(--accent));
+}
+
+/* ─── Lists ─── */
+.ProseMirror ul:not([data-type="taskList"]) {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin: 0.25rem 0;
+}
+.ProseMirror ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+  margin: 0.25rem 0;
+}
+.ProseMirror li {
+  margin: 0.15rem 0;
+  line-height: 1.6;
+}
+
+/* ─── Underline ─── */
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+/* ─── Selection ─── */
+.ProseMirror .selection,
+.ProseMirror *::selection {
+  background: hsl(var(--primary) / 0.2);
+}
+

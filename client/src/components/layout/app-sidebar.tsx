@@ -1,5 +1,6 @@
 import { Link, useLocation } from "wouter";
-import { Plus, FileText, Database, Home, Settings, LogOut, ChevronRight, ChevronDown, MoreHorizontal, Trash2 } from "lucide-react";
+import { Plus, FileText, Database, Home, Settings, LogOut, ChevronRight, ChevronDown, MoreHorizontal, Trash2, Sun, Moon } from "lucide-react";
+import { useTheme } from "next-themes";
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +28,7 @@ export function AppSidebar() {
   const { data: pages = [] } = usePages();
   const createPage = useCreatePage();
   const [location, setLocation] = useLocation();
+  const { theme, setTheme } = useTheme();
 
   const handleCreatePage = (parentId?: number, isDatabase = false) => {
     createPage.mutate({ parentId, isDatabase, title: "Untitled" }, {
@@ -90,9 +92,11 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
-                <SidebarMenuButton tooltip="Settings">
-                  <Settings className="w-4 h-4" />
-                  <span>Settings</span>
+                <SidebarMenuButton asChild tooltip="Settings">
+                  <Link href="/app/settings" className={location === "/app/settings" ? "bg-sidebar-accent" : ""}>
+                    <Settings className="w-4 h-4" />
+                    <span>Settings</span>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
@@ -127,6 +131,28 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="p-3 border-t border-sidebar-border">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start px-2 text-muted-foreground hover:text-foreground"
+            onClick={() => logout()}
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            <span className="text-sm">Sign out</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 flex-shrink-0 text-muted-foreground hover:text-foreground"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }

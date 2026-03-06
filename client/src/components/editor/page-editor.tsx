@@ -4,19 +4,33 @@ import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import TaskList from "@tiptap/extension-task-list";
 import TaskItem from "@tiptap/extension-task-item";
+import Highlight from "@tiptap/extension-highlight";
+import Underline from "@tiptap/extension-underline";
+import { TextStyle } from "@tiptap/extension-text-style";
+import Color from "@tiptap/extension-color";
+import TextAlign from "@tiptap/extension-text-align";
+import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { common, createLowlight } from "lowlight";
 import { useUpdatePage } from "@/hooks/use-pages";
 import { useDebounce } from "@/hooks/use-debounce";
 import { SlashMenu } from "./slash-menu";
+import { BubbleToolbar } from "./bubble-toolbar";
+import { MathBlock } from "./math-block";
 import { AiDialog } from "./ai-dialog";
 import type { Page } from "@shared/schema";
-import { ImageIcon, Smile } from "lucide-react";
+import { ImageIcon, Smile, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const lowlight = createLowlight(common);
 
 export function PageEditor({ page }: { page: Page }) {
   const [title, setTitle] = useState(page.title || "");
   const [icon, setIcon] = useState(page.icon || "");
   const [coverImage, setCoverImage] = useState(page.coverImage || "");
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
+  const [wordCount, setWordCount] = useState(0);
   
   const updatePage = useUpdatePage();
   const debouncedUpdate = useDebounce((updates: Partial<Page>) => {
@@ -47,16 +61,31 @@ export function PageEditor({ page }: { page: Page }) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        // Disable the default code block since we're using lowlight
+        codeBlock: false,
+      }),
       Placeholder.configure({
         placeholder: "Type '/' for commands",
         emptyEditorClass: 'is-editor-empty',
       }),
       TaskList,
       TaskItem.configure({ nested: true }),
+      Highlight.configure({ multicolor: true }),
+      Underline,
+      TextStyle,
+      Color,
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      Link.configure({ openOnClick: true, HTMLAttributes: { class: "editor-link" } }),
+      Image.configure({ HTMLAttributes: { class: "editor-image" } }),
+      CodeBlockLowlight.configure({ lowlight, HTMLAttributes: { class: "code-block" } }),
+      MathBlock,
     ],
     content: page.content as any || "",
     onUpdate: ({ editor }) => {
+      const text = editor.getText();
+      const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+      setWordCount(words);
       debouncedUpdate({ content: editor.getJSON() });
     },
   });
@@ -145,8 +174,17 @@ export function PageEditor({ page }: { page: Page }) {
         {/* Editor */}
         <div className="prose prose-stone dark:prose-invert max-w-none pb-32">
           {editor && <SlashMenu editor={editor} onAiClick={() => setAiDialogOpen(true)} />}
+          {editor && <BubbleToolbar editor={editor} />}
           <EditorContent editor={editor} />
         </div>
+
+        {/* Word count */}
+        {wordCount > 0 && (
+          <div className="flex items-center gap-2 mt-2 pb-4 text-xs text-muted-foreground/60">
+            <Hash className="w-3 h-3" />
+            <span>{wordCount} {wordCount === 1 ? "word" : "words"}</span>
+          </div>
+        )}
       </div>
 
       <AiDialog 
