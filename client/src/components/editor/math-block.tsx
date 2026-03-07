@@ -35,7 +35,7 @@ function MathBlockView({ node, updateAttributes, selected }: NodeViewProps) {
 
   return (
     <NodeViewWrapper
-      className={`math-block-wrapper my-3 rounded-lg border border-border overflow-hidden ${selected ? "ring-2 ring-ring" : ""}`}
+      className={`math-block-wrapper my-3 rounded-lg overflow-hidden ${selected ? "ring-2 ring-ring" : ""}`}
       data-type="math-block"
     >
       {editing ? (

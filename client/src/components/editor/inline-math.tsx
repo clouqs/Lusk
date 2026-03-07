@@ -1,4 +1,4 @@
-import { Node, mergeAttributes } from "@tiptap/core";
+import { Node, mergeAttributes, nodeInputRule } from "@tiptap/core";
 import { ReactNodeViewRenderer, NodeViewWrapper } from "@tiptap/react";
 import { useState } from "react";
 import katex from "katex";
@@ -87,5 +87,16 @@ export const InlineMath = Node.create({
 
   addNodeView() {
     return ReactNodeViewRenderer(InlineMathView);
+  },
+
+  // Typing $$E=mc^2$$ auto-converts to an inline math node
+  addInputRules() {
+    return [
+      nodeInputRule({
+        find: /\$\$([^\$\n]+)\$\$$/,
+        type: this.type,
+        getAttributes: (match) => ({ latex: match[1] }),
+      }),
+    ];
   },
 });

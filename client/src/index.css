@@ -352,3 +352,57 @@
   background: hsl(var(--primary) / 0.2);
 }
 
+/* ─── react-day-picker calendar ─── */
+.rdp {
+  --rdp-cell-size: 36px;
+  --rdp-accent-color: hsl(var(--primary));
+  --rdp-background-color: hsl(var(--accent));
+  --rdp-accent-color-dark: hsl(var(--primary));
+  --rdp-background-color-dark: hsl(var(--accent));
+  --rdp-outline: 2px solid hsl(var(--primary));
+  margin: 0;
+}
+.rdp-day {
+  color: hsl(var(--foreground));
+  border-radius: 6px;
+}
+.rdp-day_selected:not([disabled]),
+.rdp-day_selected:focus:not([disabled]),
+.rdp-day_selected:hover:not([disabled]) {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+.rdp-day:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: hsl(var(--accent));
+}
+.rdp-caption_label,
+.rdp-head_cell {
+  color: hsl(var(--muted-foreground));
+  font-size: 0.8rem;
+}
+.rdp-nav_button {
+  color: hsl(var(--muted-foreground));
+}
+.rdp-nav_button:hover {
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--accent));
+}
+/* dot indicator for days with events */
+.rdp-day_has-event {
+  position: relative;
+}
+.rdp-day_has-event::after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--primary));
+  border-radius: 50%;
+  pointer-events: none;
+}
+.rdp-day_selected.rdp-day_has-event::after {
+  background: hsl(var(--primary-foreground));
+}

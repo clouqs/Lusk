@@ -27,6 +27,7 @@ import { tiptapToMarkdown } from "@/lib/markdown-export";
 import type { Page } from "@shared/schema";
 import { ImageIcon, Smile, Hash, Maximize2, Minimize2, Download, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { EmojiPicker } from "./emoji-picker";
 
 const lowlight = createLowlight(common);
 
@@ -204,18 +205,17 @@ export function PageEditor({ page }: { page: Page }) {
         {icon && (
           <div className="relative group/icon inline-block mb-4">
             <span className="text-6xl md:text-7xl">{icon}</span>
-            <button 
-              className="absolute -top-2 -right-2 bg-background border border-border rounded-full p-1 shadow-sm opacity-0 group-hover/icon:opacity-100 transition-opacity"
-              onClick={() => {
-                const newIcon = prompt("Enter an emoji:", icon);
-                if (newIcon) {
-                  setIcon(newIcon);
-                  updatePage.mutate({ id: page.id, icon: newIcon });
-                }
+            <EmojiPicker
+              value={icon}
+              onChange={(newIcon) => {
+                setIcon(newIcon);
+                updatePage.mutate({ id: page.id, icon: newIcon || null });
               }}
             >
-              <Smile className="w-3 h-3 text-muted-foreground" />
-            </button>
+              <button className="absolute -top-2 -right-2 bg-background border border-border rounded-full p-1 shadow-sm opacity-0 group-hover/icon:opacity-100 transition-opacity">
+                <Smile className="w-3 h-3 text-muted-foreground" />
+              </button>
+            </EmojiPicker>
           </div>
         )}
 
