@@ -100,6 +100,30 @@ export function useDeletePage() {
   });
 }
 
+export function useDuplicatePage() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const url = buildUrl(api.pages.duplicate.path, { id });
+      const res = await fetch(url, {
+        method: api.pages.duplicate.method,
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to duplicate page");
+      return api.pages.duplicate.responses[201].parse(await res.json());
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [api.pages.list.path] });
+      toast({ title: "Page duplicated" });
+    },
+    onError: (err) => {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    },
+  });
+}
+
 export function useAskAi() {
   const { toast } = useToast();
 

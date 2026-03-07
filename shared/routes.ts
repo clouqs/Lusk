@@ -75,7 +75,16 @@ export const api = {
         400: errorSchemas.validation,
         401: errorSchemas.unauthorized,
       }
-    }
+    },
+    duplicate: {
+      method: 'POST' as const,
+      path: '/api/pages/:id/duplicate' as const,
+      responses: {
+        201: z.custom<typeof pages.$inferSelect>(),
+        404: errorSchemas.notFound,
+        401: errorSchemas.unauthorized,
+      }
+    },
   },
 };
 

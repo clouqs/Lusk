@@ -2,6 +2,7 @@ import type { Editor } from "@tiptap/react";
 import {
   Bold, Italic, Underline, Strikethrough, Code,
   Highlighter, Link2, Link2Off, AlignLeft, AlignCenter, AlignRight,
+  Superscript, Subscript,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -101,6 +102,13 @@ export function BubbleToolbar({ editor }: { editor: Editor }) {
           </button>
           <button className={`${btn} ${editor.isActive("highlight") ? ac : ""}`} onClick={() => editor.chain().focus().toggleHighlight().run()} title="Highlight">
             <Highlighter className="w-3.5 h-3.5" />
+          </button>
+          <div className="w-px h-4 bg-border mx-0.5" />
+          <button className={`${btn} ${editor.isActive("superscript") ? ac : ""}`} onClick={() => editor.chain().focus().toggleSuperscript().run()} title="Superscript">
+            <Superscript className="w-3.5 h-3.5" />
+          </button>
+          <button className={`${btn} ${editor.isActive("subscript") ? ac : ""}`} onClick={() => editor.chain().focus().toggleSubscript().run()} title="Subscript">
+            <Subscript className="w-3.5 h-3.5" />
           </button>
           <div className="w-px h-4 bg-border mx-0.5" />
           <button

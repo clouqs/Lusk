@@ -84,9 +84,25 @@ function buildItems(onAiClick: () => void): SlashItem[] {
       icon: <Sigma className="w-4 h-4" />,
       label: "Math Equation",
       description: "Insert a LaTeX math block.",
-      keywords: ["math", "latex", "equation", "formula", "katex"],
+      keywords: ["math", "latex", "equation", "formula", "katex", "block"],
       action: (e) =>
         e.chain().focus().insertContent({ type: "mathBlock", attrs: { latex: "" } }).run(),
+    },
+    {
+      icon: <span className="w-4 h-4 font-serif font-bold text-xs flex items-center justify-center">∑</span>,
+      label: "Inline Math",
+      description: "Insert an inline LaTeX formula.",
+      keywords: ["math", "latex", "inline", "formula", "katex", "equation"],
+      action: (e) =>
+        e.chain().focus().insertContent({ type: "inlineMath", attrs: { latex: "" } }).run(),
+    },
+    {
+      icon: <Table2 className="w-4 h-4" />,
+      label: "Table",
+      description: "Insert a table with rows and columns.",
+      keywords: ["table", "grid", "spreadsheet", "rows", "columns"],
+      action: (e) =>
+        e.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run(),
     },
     {
       icon: <ImageIcon className="w-4 h-4" />,
@@ -245,7 +261,7 @@ export function SlashMenu({ editor, onAiClick }: { editor: Editor; onAiClick: ()
 
   const groups = [
     { label: "Basic Blocks", keys: ["Text", "Heading 1", "Heading 2", "Heading 3", "Bullet List", "Numbered List", "To-do List"] },
-    { label: "Content", keys: ["Quote", "Code Block", "Math Equation", "Image", "Divider", "Callout"] },
+    { label: "Content", keys: ["Quote", "Code Block", "Math Equation", "Inline Math", "Table", "Image", "Divider", "Callout"] },
     { label: "AI", keys: ["Ask AI"] },
   ];
 

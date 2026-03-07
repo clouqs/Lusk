@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -12,15 +12,20 @@ import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import { Table, TableRow, TableHeader, TableCell } from "@tiptap/extension-table";
+import Superscript from "@tiptap/extension-superscript";
+import Subscript from "@tiptap/extension-subscript";
 import { common, createLowlight } from "lowlight";
 import { useUpdatePage } from "@/hooks/use-pages";
 import { useDebounce } from "@/hooks/use-debounce";
 import { SlashMenu } from "./slash-menu";
 import { BubbleToolbar } from "./bubble-toolbar";
 import { MathBlock } from "./math-block";
+import { InlineMath } from "./inline-math";
 import { AiDialog } from "./ai-dialog";
+import { tiptapToMarkdown } from "@/lib/markdown-export";
 import type { Page } from "@shared/schema";
-import { ImageIcon, Smile, Hash } from "lucide-react";
+import { ImageIcon, Smile, Hash, Maximize2, Minimize2, Download, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const lowlight = createLowlight(common);
@@ -31,10 +36,26 @@ export function PageEditor({ page }: { page: Page }) {
   const [coverImage, setCoverImage] = useState(page.coverImage || "");
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [wordCount, setWordCount] = useState(0);
-  
+  const [focusMode, setFocusMode] = useState(false);
+
+  // Keyboard shortcut: Escape to exit focus mode
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && focusMode) setFocusMode(false);
+      if (e.key === "F11" || (e.key === "." && (e.metaKey || e.ctrlKey))) {
+        e.preventDefault();
+        setFocusMode((f) => !f);
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => document.removeEventListener("keydown", handler);
+  }, [focusMode]);
+
+  const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
   const updatePage = useUpdatePage();
   const debouncedUpdate = useDebounce((updates: Partial<Page>) => {
-    updatePage.mutate({ id: page.id, ...updates });
+    updatePage.mutate({ id: page.id, ...updates } as any);
   }, 1000);
 
   // Update local state when page prop changes (e.g. navigation to new page)
@@ -80,6 +101,13 @@ export function PageEditor({ page }: { page: Page }) {
       Image.configure({ HTMLAttributes: { class: "editor-image" } }),
       CodeBlockLowlight.configure({ lowlight, HTMLAttributes: { class: "code-block" } }),
       MathBlock,
+      InlineMath,
+      Table.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
+      Superscript,
+      Subscript,
     ],
     content: page.content as any || "",
     onUpdate: ({ editor }) => {
@@ -89,6 +117,18 @@ export function PageEditor({ page }: { page: Page }) {
       debouncedUpdate({ content: editor.getJSON() });
     },
   });
+
+  const exportMarkdown = useCallback(() => {
+    if (!editor) return;
+    const md = tiptapToMarkdown(editor.getJSON());
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${title || "untitled"}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [editor, title]);
 
   const addCover = () => {
     const defaultCover = "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&h=400&fit=crop";
@@ -103,7 +143,30 @@ export function PageEditor({ page }: { page: Page }) {
   };
 
   return (
+    <div className={focusMode ? "fixed inset-0 z-50 bg-background overflow-y-auto" : ""}>
     <div className="max-w-4xl mx-auto w-full group/page">
+      {/* Focus mode / export toolbar */}
+      <div className="flex items-center justify-end gap-1 px-8 md:px-24 pt-3 opacity-0 group-hover/page:opacity-100 transition-opacity">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={exportMarkdown}
+          className="text-muted-foreground hover:text-foreground h-7 px-2 text-xs gap-1"
+          title="Export as Markdown"
+        >
+          <Download className="w-3.5 h-3.5" />
+          Export .md
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setFocusMode((f) => !f)}
+          className="text-muted-foreground hover:text-foreground h-7 w-7"
+          title={focusMode ? "Exit focus mode (Esc)" : "Focus mode (Ctrl+.)"}
+        >
+          {focusMode ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+        </Button>
+      </div>
       {/* Cover Image */}
       {coverImage && (
         <div className="w-full h-48 md:h-64 relative overflow-hidden bg-muted group/cover">
@@ -178,11 +241,17 @@ export function PageEditor({ page }: { page: Page }) {
           <EditorContent editor={editor} />
         </div>
 
-        {/* Word count */}
+        {/* Word count + reading time */}
         {wordCount > 0 && (
-          <div className="flex items-center gap-2 mt-2 pb-4 text-xs text-muted-foreground/60">
-            <Hash className="w-3 h-3" />
-            <span>{wordCount} {wordCount === 1 ? "word" : "words"}</span>
+          <div className="flex items-center gap-3 mt-2 pb-4 text-xs text-muted-foreground/60">
+            <div className="flex items-center gap-1">
+              <Hash className="w-3 h-3" />
+              <span>{wordCount} {wordCount === 1 ? "word" : "words"}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              <span>{readingTime} min read</span>
+            </div>
           </div>
         )}
       </div>
@@ -196,6 +265,7 @@ export function PageEditor({ page }: { page: Page }) {
           debouncedUpdate({ content: editor?.getJSON() });
         }}
       />
+    </div>
     </div>
   );
 }

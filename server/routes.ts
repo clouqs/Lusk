@@ -82,6 +82,28 @@ export async function registerRoutes(
     }
   });
 
+  app.post(api.pages.duplicate.path, async (req, res) => {
+    try {
+      const userId = req.session.userId as string;
+      const pageId = Number(req.params.id);
+      const original = await storage.getPage(pageId, userId);
+      if (!original) {
+        return res.status(404).json({ message: "Page not found" });
+      }
+      const { id: _id, createdAt: _c, updatedAt: _u, authorId: _a, ...rest } = original;
+      const copy = await storage.createPage({
+        ...rest,
+        title: (original.title || "Untitled") + " (copy)",
+        content: original.content as any,
+        properties: original.properties as any,
+        authorId: userId,
+      });
+      res.status(201).json(copy);
+    } catch (e) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   app.post(api.pages.askAi.path, async (req, res) => {
     try {
       const userId = req.session.userId as string;

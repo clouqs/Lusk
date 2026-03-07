@@ -130,6 +130,26 @@ export default function Settings() {
               </div>
               <span className="ml-auto text-xs bg-primary/10 text-primary rounded px-2 py-0.5 font-medium">On</span>
             </div>
+            <div className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card">
+              <Type className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Tables</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Use <code className="bg-muted px-1 rounded text-xs">/table</code> to insert a resizable table.
+                </p>
+              </div>
+              <span className="ml-auto text-xs bg-primary/10 text-primary rounded px-2 py-0.5 font-medium">On</span>
+            </div>
+            <div className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card">
+              <Palette className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-sm font-medium">Superscript &amp; Subscript</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Select text and use the bubble toolbar to apply superscript or subscript formatting.
+                </p>
+              </div>
+              <span className="ml-auto text-xs bg-primary/10 text-primary rounded px-2 py-0.5 font-medium">On</span>
+            </div>
           </div>
         </Section>
 
@@ -154,6 +174,9 @@ export default function Settings() {
                   ["Inline code", "Ctrl + E"],
                   ["Open command menu", "/"],
                   ["Submit math equation", "Shift + Enter"],
+                  ["Quick find / navigate", "Ctrl + K"],
+                  ["Toggle focus mode", "Ctrl + ."],
+                  ["Exit focus mode", "Esc"],
                 ].map(([action, shortcut]) => (
                   <tr key={action} className="hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-2.5 text-foreground">{action}</td>
@@ -202,6 +225,10 @@ export default function Settings() {
           <div className="text-sm text-muted-foreground space-y-1">
             <p>Notion Clone — AI-powered note-taking workspace.</p>
             <p>Built with TipTap, KaTeX, React, and TailwindCSS.</p>
+            <p className="text-xs mt-2 pt-2 border-t border-border">
+              Features: Rich text editor · Block &amp; inline KaTeX math · Tables · Syntax highlighting ·
+              Task lists · AI writing assistant · Favorites · Quick find (Ctrl+K) · Focus mode · Export to Markdown
+            </p>
           </div>
         </Section>
       </div>

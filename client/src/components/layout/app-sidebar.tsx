@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Plus, FileText, Database, Home, Settings, LogOut, ChevronRight, ChevronDown, MoreHorizontal, Trash2, Sun, Moon } from "lucide-react";
+import { Plus, FileText, Database, Home, Settings, LogOut, ChevronRight, ChevronDown, MoreHorizontal, Trash2, Sun, Moon, Star, Copy } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
   Sidebar,
@@ -16,12 +16,13 @@ import {
   SidebarHeader,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { usePages, useCreatePage, useDeletePage } from "@/hooks/use-pages";
+import { usePages, useCreatePage, useDeletePage, useDuplicatePage } from "@/hooks/use-pages";
 import { useAuth } from "@/hooks/use-auth";
+import { useFavorites } from "@/hooks/use-favorites";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo } from "react";
 import type { Page } from "@shared/schema";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 export function AppSidebar() {
   const { user, logout } = useAuth();
@@ -29,6 +30,7 @@ export function AppSidebar() {
   const createPage = useCreatePage();
   const [location, setLocation] = useLocation();
   const { theme, setTheme } = useTheme();
+  const { favorites, isFavorite } = useFavorites();
 
   const handleCreatePage = (parentId?: number, isDatabase = false) => {
     createPage.mutate({ parentId, isDatabase, title: "Untitled" }, {
@@ -103,6 +105,41 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
+        {/* Favorites section */}
+        {favorites.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="flex items-center gap-1.5">
+              <Star className="w-3.5 h-3.5 text-yellow-500 fill-yellow-500" />
+              <span>Favorites</span>
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {pages
+                  .filter((p) => isFavorite(p.id))
+                  .map((page) => (
+                    <SidebarMenuItem key={page.id}>
+                      <SidebarMenuButton asChild>
+                        <Link
+                          href={`/app/${page.id}`}
+                          className={location === `/app/${page.id}` ? "bg-sidebar-accent font-medium" : ""}
+                        >
+                          {page.icon ? (
+                            <span className="text-sm">{page.icon}</span>
+                          ) : page.isDatabase ? (
+                            <Database className="w-4 h-4 opacity-70" />
+                          ) : (
+                            <FileText className="w-4 h-4 opacity-70" />
+                          )}
+                          <span className="truncate">{page.title || "Untitled"}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
+
         <SidebarGroup>
           <SidebarGroupLabel className="flex items-center justify-between group/label">
             <span>Private</span>
@@ -170,8 +207,11 @@ function PageTreeItem({
 }) {
   const [expanded, setExpanded] = useState(false);
   const deletePage = useDeletePage();
+  const duplicatePage = useDuplicatePage();
   const [location, setLocation] = useLocation();
+  const { isFavorite, toggle: toggleFavorite } = useFavorites();
   const isActive = activeId === page.id.toString();
+  const faved = isFavorite(page.id);
 
   return (
     <SidebarMenuItem>
@@ -207,14 +247,23 @@ function PageTreeItem({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => deletePage.mutate(page.id)} className="text-destructive">
-                <Trash2 className="w-4 h-4 mr-2" /> Delete
+              <DropdownMenuItem onClick={() => toggleFavorite(page.id)}>
+                <Star className={`w-4 h-4 mr-2 ${faved ? "text-yellow-500 fill-yellow-500" : ""}`} />
+                {faved ? "Remove from Favorites" : "Add to Favorites"}
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => duplicatePage.mutate(page.id)}>
+                <Copy className="w-4 h-4 mr-2" /> Duplicate
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => onCreateChild(page.id, false)}>
                 <FileText className="w-4 h-4 mr-2" /> Add sub-page
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onCreateChild(page.id, true)}>
                 <Database className="w-4 h-4 mr-2" /> Add database
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => deletePage.mutate(page.id)} className="text-destructive">
+                <Trash2 className="w-4 h-4 mr-2" /> Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

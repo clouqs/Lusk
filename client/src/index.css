@@ -261,6 +261,45 @@
   font-size: 1.1em;
 }
 
+/* ─── Inline math ─── */
+.inline-math {
+  display: inline;
+  user-select: none;
+}
+.inline-math .katex {
+  font-size: 1em;
+}
+.inline-math-edit {
+  display: inline;
+}
+.inline-math-input {
+  vertical-align: baseline;
+}
+
+/* ─── TipTap table controls ─── */
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+  margin: 0.75rem 0;
+}
+.ProseMirror .resize-cursor {
+  cursor: col-resize;
+}
+.ProseMirror td.selectedCell,
+.ProseMirror th.selectedCell {
+  background: hsl(var(--accent));
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: -2px;
+}
+.ProseMirror .column-resize-handle {
+  background-color: hsl(var(--ring));
+  bottom: -2px;
+  pointer-events: none;
+  position: absolute;
+  right: -2px;
+  top: 0;
+  width: 2px;
+}
+
 /* ─── Table ─── */
 .ProseMirror table {
   border-collapse: collapse;
