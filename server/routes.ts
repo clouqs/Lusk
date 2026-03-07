@@ -118,7 +118,7 @@ export async function registerRoutes(
       });
       const input = api.pages.askAi.input.parse(req.body);
       let systemPrompt =
-        "You are a helpful AI writing assistant embedded in a Notion-like text editor. Help the user write, edit, or brainstorm content.";
+        "You are a helpful AI writing assistant embedded in a easy text editor. Help the user write, edit, or brainstorm content.";
       if (input.context) {
         systemPrompt += ` Here is some context from the document: ${input.context}`;
       }

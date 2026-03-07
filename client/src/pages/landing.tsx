@@ -127,7 +127,7 @@ export default function Landing() {
               <div className="w-8 h-8 bg-foreground text-background rounded-lg flex items-center justify-center">
                 <FileText className="w-5 h-5" />
               </div>
-              NotionClone
+              Lusk
             </div>
             <Button
               onClick={() => openDialog("login")}

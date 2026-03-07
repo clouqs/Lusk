@@ -223,7 +223,7 @@ export default function Settings() {
         {/* About */}
         <Section title="About">
           <div className="text-sm text-muted-foreground space-y-1">
-            <p>Notion Clone — AI-powered note-taking workspace.</p>
+            <p>Lusk — AI-powered note-taking workspace.</p>
             <p>Built with TipTap, KaTeX, React, and TailwindCSS.</p>
             <p className="text-xs mt-2 pt-2 border-t border-border">
               Features: Rich text editor · Block &amp; inline KaTeX math · Tables · Syntax highlighting ·

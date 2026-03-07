@@ -67,7 +67,7 @@ export function AppSidebar() {
                 <div className="w-6 h-6 rounded bg-primary text-primary-foreground flex items-center justify-center text-xs">
                   {user?.firstName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                 </div>
-                <span className="truncate">{user?.firstName || user?.email}'s Notion</span>
+                <span className="truncate">{user?.firstName || user?.email}'s desk</span>
                 <ChevronDown className="w-4 h-4 ml-auto opacity-50" />
               </div>
             </Button>

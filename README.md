@@ -1,6 +1,6 @@
 # Lusk
 
-Lusk is a modern, Notion-inspired note-taking app built with TypeScript. It gives you a clean, fast workspace to write, organize, and manage your notes — with many more features on the way.
+Lusk is a modern, note-taking app built with TypeScript. It gives you a clean, fast workspace to write, organize, and manage your notes — with many more features on the way.
 
 ## ✨ Features
 
